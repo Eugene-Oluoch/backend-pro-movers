@@ -35,7 +35,8 @@ class UserSerializer(serializers.ModelSerializer):
 class RequestSerializer(serializers.ModelSerializer):
     class Meta:
         model = Request
-        fields = "__all__"
+        fields = ('currentLocation','newLocation','created','id_user','id_mover','user','mover','fees','Package','is_accepted','is_pending','is_declined','packageDescription','movingDate')
+        
 
 
 class RegUserSerializer(serializers.ModelSerializer):

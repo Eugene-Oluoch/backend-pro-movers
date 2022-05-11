@@ -6,6 +6,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from rest_framework.views import APIView 
 
 from .models import User, Request, RegUser, Mover
 from .serializers import UserSerializer, RequestSerializer, RegUserSerializer, MoverSerializer
@@ -36,12 +37,10 @@ class MyTokenObtainPairView(TokenObtainPairView):
 @api_view(['POST'])
 def register_user(request):
     serializer = UserSerializer(data=request.data)
-    data = {}
     if serializer.is_valid(raise_exception=True):
         acc_type = request.data['acc_type']
-        instance = serializer.create(validated_data=request.data)
-
-        if instance:
+        data = {}
+        if instance := serializer.create(validated_data=request.data):
             # token = Token.objects.get(user=instance).key
             # The email section
             subject = 'Welcome to ProMovers'
@@ -65,10 +64,8 @@ def register_user(request):
 
 @api_view(['PUT'])
 def api_update_user_profile(request):
-    user_id = request.data['user']
-    if user_id:
-        user = RegUser.get_user_user_by_id(user_id)
-        if user:
+    if user_id := request.data['user']:
+        if user := RegUser.get_user_user_by_id(user_id):
             serializer = RegUserSerializer(user, request.data, partial=True)
             if serializer.is_valid(raise_exception=True):
                 serializer.save()
@@ -84,10 +81,8 @@ def api_update_user_profile(request):
 
 @api_view(['PUT'])
 def api_update_mover_profile(request):
-    user_id = request.data['user']
-    if user_id:
-        mover = Mover.get_mover_user_by_id(user_id)
-        if mover:
+    if user_id := request.data['user']:
+        if mover := Mover.get_mover_user_by_id(user_id):
             serializer = MoverSerializer(mover, request.data, partial=True)
             if serializer.is_valid(raise_exception=True):
                 serializer.save()
@@ -99,6 +94,7 @@ def api_update_mover_profile(request):
     else:
         data = {"message": "Invalid user"}
         return Response(data, status=400)
+
 
 
 @api_view(['GET'])
@@ -139,36 +135,40 @@ def api_get_specific_mover(request, username):
         return Response({"response": "404"}, status=404)
 
 
-@api_view(['POST'])
-# @permission_classes((IsAuthenticated,))
-def new_move_request(request):
-    serializer = RequestSerializer(data=request.data)
-    data = {}
-    if serializer.is_valid(raise_exception=True):
-        instance = serializer.create(validated_data=request.data)
-
-        if instance:
-            data['response'] = "Request created successfully"
-            return Response(data, status=200)
-        else:
-            data['response'] = "User registration, failed"
-            return Response(data, status=400)
-
-
-@api_view(['GET'])
-# @permission_classes((IsAuthenticated,))
-def api_get_all_users_requests(request, username):
-    users = Request.objects.filter(user__username=username).all()
-
-    serializer = RequestSerializer(users, many=True)
-    return Response(serializer.data)
+class new_move_request(APIView):
+    def post(self,request,*args,**kwargs):
+        draft_request_data = request.data.copy()
+        id_mover = draft_request_data["id_mover"]
+        id_user = draft_request_data["id_user"]
+        mover = Mover.objects.get(id=id_mover)
+        user = RegUser.objects.get(id=id_user)
+        draft_request_data["user"] = user.id
+        draft_request_data["mover"] = mover.id
+        kwargs["data"] = draft_request_data
+        serializer = RequestSerializer(data=draft_request_data)
+        if not serializer.is_valid():
+            return Response(serializer.errors)
+        serializer.save()
+        return Response(serializer.data)
 
 
-@api_view(['GET'])
-# @permission_classes((IsAuthenticated,))
-def api_get_all_requests(request):
-    users = Request.objects.all()
 
-    serializer = RequestSerializer(users, many=True)
-    return Response(serializer.data)
+
+class api_get_all_users_requests(APIView):
+    def get(self,request,username,*args,**kwargs):
+        users = Request.objects.filter(user__full_name=username).all()
+        serializer = RequestSerializer(users,many=True)
+        return Response(serializer.data)
+
+class api_get_all_movers_requests(APIView):
+    def get(self,request,username,*args,**kwargs):
+        users = Request.objects.filter(mover__user__username=username).all()
+        serializer = RequestSerializer(users,many=True)
+        return Response(serializer.data)
+
+class api_get_all_requests(APIView):
+    def get(self,request,*args,**kwargs):
+        users = Request.objects.all()
+        serializer = RequestSerializer(users,many=True)
+        return Response(serializer.data)
 

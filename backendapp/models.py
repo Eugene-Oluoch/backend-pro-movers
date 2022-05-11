@@ -72,6 +72,9 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
+    
+    def __str__(self):
+        return self.email
 
 
 class Mover(models.Model):
@@ -82,6 +85,8 @@ class Mover(models.Model):
     name = models.CharField(max_length=100, unique=False, null=True, blank=True)
     # image = models.ImageField(null=True)
 
+    def __str__(self):
+        return self.user.email
 
 class RegUser(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -91,6 +96,9 @@ class RegUser(models.Model):
     full_name = models.CharField(max_length=100, unique=False, null=True, blank=True)
     # profile_img = models.ImageField(null=True)
 
+    def __str__(self):
+        return self.user.email
+    
     @classmethod
     def get_user_by_id(cls, user_id):
         return cls.objects.filter(id=user_id).all()
@@ -106,8 +114,10 @@ class Request(models.Model):
     newLocation = models.CharField(max_length=99, blank=False, null=False)
     updated = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
-    user = models.ForeignKey(RegUser, on_delete=models.CASCADE, blank=False, null=False)
-    mover = models.ForeignKey(Mover, on_delete=models.CASCADE, blank=False, null=False)
+    id_user = models.IntegerField(null=True)
+    id_mover = models.IntegerField(null=True)
+    user = models.ForeignKey(RegUser, on_delete=models.CASCADE, blank=False, null=True)
+    mover = models.ForeignKey(Mover, on_delete=models.CASCADE, blank=False, null=True )
     fees = models.IntegerField(default=5000, null=True, blank=False)
     Package = models.CharField(max_length=400, null=True)
     is_accepted = models.BooleanField(null=True)
