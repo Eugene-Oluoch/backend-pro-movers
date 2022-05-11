@@ -1,6 +1,5 @@
 from django.contrib.auth.base_user import AbstractBaseUser
 from django.db import models
-from cloudinary.models import CloudinaryField
 from django.conf import settings
 from django.db.models.signals import post_save
 from django.dispatch import receiver
@@ -83,7 +82,7 @@ class Mover(models.Model):
     location = models.CharField(max_length=100, null=True, blank=True)
     description = models.TextField(null=True, max_length=500)
     name = models.CharField(max_length=100, unique=False, null=True, blank=True)
-    image = CloudinaryField('image',null=True)
+    image = models.CharField(null=True,max_length=10000)
     
     # image = models.ImageField(null=True)
 
