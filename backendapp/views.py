@@ -141,7 +141,7 @@ class new_move_request(APIView):
         id_mover = draft_request_data["id_mover"]
         id_user = draft_request_data["id_user"]
         mover = Mover.objects.get(id=id_mover)
-        user = RegUser.objects.get(id=id_user)
+        user = User.objects.get(id=id_user)
         draft_request_data["user"] = user.id
         draft_request_data["mover"] = mover.id
         kwargs["data"] = draft_request_data
@@ -156,7 +156,7 @@ class new_move_request(APIView):
 
 class api_get_all_users_requests(APIView):
     def get(self,request,username,*args,**kwargs):
-        users = Request.objects.filter(user__full_name=username).all()
+        users = Request.objects.filter(user__username=username).all()
         serializer = RequestSerializer(users,many=True)
         return Response(serializer.data)
 

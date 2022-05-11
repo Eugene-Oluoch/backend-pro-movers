@@ -15,6 +15,9 @@ from datetime import timedelta
 import django_heroku
 import dj_database_url
 from decouple import config, Csv
+import cloudinary
+import cloudinary.api
+import cloudinary.uploader
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 
@@ -49,7 +52,8 @@ INSTALLED_APPS = [
     # 'rest_framework_swagger',
     'drf_yasg',
     'rest_framework_simplejwt.token_blacklist',
-    'corsheaders'
+    'corsheaders',
+    'cloudinary'
 ]
 
 # REST_FRAMEWORK = {
@@ -209,3 +213,9 @@ EMAIL_HOST_PASSWORD = 'promoversapp123'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 django_heroku.settings(locals())
 CORS_ALLOW_ALL_ORIGINS = True
+cloudinary.config(
+  cloud_name = "dnoti8rqz",
+  api_key = "518275736938569",
+  api_secret = "VnSVqrzmXEOOXyk4bfy3alDdGrM",
+  secure = True
+)

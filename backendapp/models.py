@@ -1,6 +1,6 @@
 from django.contrib.auth.base_user import AbstractBaseUser
 from django.db import models
-
+from cloudinary.models import CloudinaryField
 from django.conf import settings
 from django.db.models.signals import post_save
 from django.dispatch import receiver
@@ -83,6 +83,8 @@ class Mover(models.Model):
     location = models.CharField(max_length=100, null=True, blank=True)
     description = models.TextField(null=True, max_length=500)
     name = models.CharField(max_length=100, unique=False, null=True, blank=True)
+    image = CloudinaryField('image',null=True)
+    
     # image = models.ImageField(null=True)
 
     def __str__(self):
@@ -116,7 +118,7 @@ class Request(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     id_user = models.IntegerField(null=True)
     id_mover = models.IntegerField(null=True)
-    user = models.ForeignKey(RegUser, on_delete=models.CASCADE, blank=False, null=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, blank=False, null=True)
     mover = models.ForeignKey(Mover, on_delete=models.CASCADE, blank=False, null=True )
     fees = models.IntegerField(default=5000, null=True, blank=False)
     Package = models.CharField(max_length=400, null=True)
