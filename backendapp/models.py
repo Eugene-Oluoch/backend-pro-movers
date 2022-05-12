@@ -69,6 +69,13 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_superuser = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
 
+    phone = models.CharField(null=True, blank=True, max_length=22)
+    location = models.CharField(max_length=100, null=True, blank=True)
+    bio = models.TextField(null=True, max_length=500)
+    full_name = models.CharField(max_length=100, unique=False, null=True, blank=True)
+    image = models.CharField(null=True, max_length=10000)
+
+
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
     
@@ -89,28 +96,7 @@ class Mover(models.Model):
     def __str__(self):
         return self.user.email
 
-class RegUser(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    phone = models.CharField(null=True, blank=True, max_length=22)
-    location = models.CharField(max_length=100, null=True, blank=True)
-    bio = models.TextField(null=True, max_length=500)
-    full_name = models.CharField(max_length=100, unique=False, null=True, blank=True)
-    # profile_img = models.ImageField(null=True)
 
-    def __str__(self):
-        return self.user.email
-    
-    @classmethod
-    def get_user_by_id(cls, user_id):
-        return cls.objects.filter(id=user_id).all()
-
-# @receiver(post_save, sender=settings.AUTH_USER_MODEL)
-# def create_auth_token(sender, instance=None, created=False, **kwargs):
-#     if created:
-#         Token.objects.create(user=instance)
-
-
-# sourcery skip: avoid-builtin-shadow
 class Request(models.Model):
     id = models.AutoField(primary_key=True)
     currentLocation = models.CharField(max_length=99, blank=False, null=False)
