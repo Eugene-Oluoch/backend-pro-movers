@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from backendapp.models import User, Request, Mover, RegUser
+from backendapp.models import User, Request, Mover
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -23,11 +23,11 @@ class UserSerializer(serializers.ModelSerializer):
             )
             mover.save()
         else:
-            reguser = RegUser(
+            user = User(
                 user=user,
                 full_name=validated_data['name']
             )
-            reguser.save()
+            user.save()
         # user.update({"acc_type": acc_type})
         return user
 
@@ -41,7 +41,7 @@ class RequestSerializer(serializers.ModelSerializer):
 
 class RegUserSerializer(serializers.ModelSerializer):
     class Meta:
-        model = RegUser
+        model = User
         fields = "__all__"
         read_only_fields = ['user']
 

@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 # Register your models here.
-from backendapp.models import User, RegUser, Mover, Request
+from backendapp.models import User, Mover, Request
 
 
 class UserAdmin(admin.ModelAdmin):
@@ -49,6 +49,6 @@ class RequestAdmin(admin.ModelAdmin):
 
 
 admin.site.register(User, UserAdmin)
-admin.site.register(RegUser, RegUserAdmin)
+
 admin.site.register(Mover, MoverAdmin)
 admin.site.register(Request, RequestAdmin)
