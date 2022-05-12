@@ -110,7 +110,9 @@ class RegUser(models.Model):
 #         Token.objects.create(user=instance)
 
 
+# sourcery skip: avoid-builtin-shadow
 class Request(models.Model):
+    id = models.AutoField(primary_key=True)
     currentLocation = models.CharField(max_length=99, blank=False, null=False)
     newLocation = models.CharField(max_length=99, blank=False, null=False)
     updated = models.DateTimeField(auto_now=True)
