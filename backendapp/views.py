@@ -6,7 +6,8 @@ from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-from rest_framework.views import APIView 
+from rest_framework.views import APIView
+from uritemplate import partial 
 
 from .models import User, Request, RegUser, Mover
 from .serializers import UserSerializer, RequestSerializer, RegUserSerializer, MoverSerializer
@@ -17,6 +18,8 @@ from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView
 )
+
+from backendapp import serializers
 
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
@@ -151,6 +154,20 @@ class new_move_request(APIView):
         serializer.save()
         return Response(serializer.data)
 
+class request_update(APIView):
+    def put(self,request, pk,*args,**kwargs):
+        requestt = Request.objects.get(id=pk)
+        serializer = RequestSerializer(requestt,data=request.data,partial=True)
+        if not serializer.is_valid():
+            return Response(serializer.errors)
+        serializer.save()
+        return Response(serializer.data)   
+    
+class get_single_request(APIView):
+    def get(self,request,pk,*args,**kwargs):
+        requestt = Request.objects.get(id=pk)
+        serializer =  RequestSerializer(requestt)
+        return Response(serializer.data)    
 
 
 
