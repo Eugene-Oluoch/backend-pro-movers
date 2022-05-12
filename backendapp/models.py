@@ -97,6 +97,7 @@ class Mover(models.Model):
         return self.user.email
 
 
+# sourcery skip: avoid-builtin-shadow
 class Request(models.Model):
     id = models.AutoField(primary_key=True)
     currentLocation = models.CharField(max_length=99, blank=False, null=False)
